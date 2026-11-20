@@ -40,7 +40,7 @@ const oSession = oMarking.oCreateMarkingSession({
   fKktOf: rnm => oKKT,                      // ККТ из kkt-core
   oSoldStore,                               // { pAdd(rnm, aEvents), pEvents(rnm, sKey), pPrune?(rnm, sBefore) } — база проданных (события); по умолчанию в памяти
   pAlert: ({ sTitle, sText }) => …,         // сообщение кассиру
-  pNeedMark: ({ sProduct }) => …,           // маркированный товар по штрихкоду: попросить код маркировки (нет — pAlert)
+  pNeedMark: ({ sProduct, oNoCode }) => …,  // маркированный товар по штрихкоду: попросить код (нет — pAlert); oNoCode — условие продажи без кода или null, 'noCode' в ответ — продать без кода
   pAskAmount: ({ sProduct, oKind, bReturn }) => …, // часть упаковки, мерный товар: количество или null
   pOfferPrice: ({ sProduct, sReason, nOfferPrice }) => …, // цена ниже минимальной: продать по ней?
   pDecide: ({ sProduct, sReason, bDoubt }) => …,   // ККТ отказала или не ответила: продать всё же?
@@ -59,6 +59,9 @@ const { bReady, sText } = await oSession.pBeforePrint(rnm, () => aItems);
 Object.assign(oTaskItem, oSession.oFiscalFields(oItem));
 // чек пробит
 await oSession.pAfterReceipt(rnm, aItems, { bReturn, bKkt: true });
+// маркированный товар без кода (избранное, выбор из списка): условие и решение кассира
+const oNoCode = oSession.oNoCodeRule(oProduct);             // { sCond, sAct, sTo } или null — нельзя
+await oSession.pAddNoCode({ oProduct, fAdd });              // позиция с признаком 32 / 30, без кода
 // черновик чека: с позицией сохранить oSession.oSavedOf(oItem) (код и способ продажи);
 // после перезагрузки — проверить заново (дубль, база проданных, ТС ПИоТ, ККТ),
 // не прошедшие позиции уходят через fDropItem
