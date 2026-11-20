@@ -40,6 +40,7 @@ const oSession = oMarking.oCreateMarkingSession({
   fKktOf: rnm => oKKT,                      // ККТ из kkt-core
   oSoldStore,                               // { pAdd(rnm, aEvents), pEvents(rnm, sKey), pPrune?(rnm, sBefore) } — база проданных (события); по умолчанию в памяти
   pAlert: ({ sTitle, sText }) => …,         // сообщение кассиру
+  pNeedMark: ({ sProduct }) => …,           // маркированный товар по штрихкоду: попросить код маркировки (нет — pAlert)
   pAskAmount: ({ sProduct, oKind, bReturn }) => …, // часть упаковки, мерный товар: количество или null
   pOfferPrice: ({ sProduct, sReason, nOfferPrice }) => …, // цена ниже минимальной: продать по ней?
   pDecide: ({ sProduct, sReason, bDoubt }) => …,   // ККТ отказала или не ответила: продать всё же?
