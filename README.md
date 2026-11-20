@@ -59,6 +59,10 @@ const { bReady, sText } = await oSession.pBeforePrint(rnm, () => aItems);
 Object.assign(oTaskItem, oSession.oFiscalFields(oItem));
 // чек пробит
 await oSession.pAfterReceipt(rnm, aItems, { bReturn, bKkt: true });
+// черновик чека: с позицией сохранить oSession.oSavedOf(oItem) (код и способ продажи);
+// после перезагрузки — проверить заново (дубль, база проданных, ТС ПИоТ, ККТ),
+// не прошедшие позиции уходят через fDropItem
+const { aKept, aDropped } = await oSession.pRestore({ rnm, aRestore: [{ oItem, oSaved }], aItems, bReturn, bKkt: true, oPiot, oClient, oOperator });
 ```
 
 ## Сроки разрешительного режима
